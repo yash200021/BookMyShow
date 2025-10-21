@@ -10,7 +10,7 @@ import java.util.List;
 
 @Getter
 @Setter
-@Entity
+@Entity(name = "bookings")
 public class Booking extends BaseModel {
     @ManyToOne
     private User user;
