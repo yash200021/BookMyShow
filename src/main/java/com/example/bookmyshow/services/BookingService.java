@@ -7,6 +7,7 @@ import com.example.bookmyshow.models.ShowSeat;
 import com.example.bookmyshow.models.User;
 import com.example.bookmyshow.models.enums.BookingStatus;
 import com.example.bookmyshow.models.enums.ShowSeatStatus;
+import com.example.bookmyshow.repositories.BookingRepository;
 import com.example.bookmyshow.repositories.ShowSeatRepository;
 import com.example.bookmyshow.repositories.UserRepository;
 import org.springframework.stereotype.Service;
@@ -23,13 +24,16 @@ public class BookingService {
     private final UserRepository userRepository;
     private final ShowSeatRepository showSeatRepository;
     private final PriceCalculatorService priceCalculatorService;
+    private final BookingRepository bookingRepository;
 
     public BookingService(UserRepository userRepository,
                           ShowSeatRepository showSeatRepository,
-                          PriceCalculatorService priceCalculatorService) {
+                          PriceCalculatorService priceCalculatorService,
+                          BookingRepository bookingRepository) {
         this.userRepository = userRepository;
         this.showSeatRepository = showSeatRepository;
         this.priceCalculatorService = priceCalculatorService;
+        this.bookingRepository = bookingRepository;
     }
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public Booking createBooking(List<Long> showSeatIds, Long userId) throws UserNotFoundException, ShowSeatNotAvailableException {
@@ -61,6 +65,6 @@ public class BookingService {
         booking.setBookingStatus(BookingStatus.PENDING);
         booking.setAmount(priceCalculatorService.calculateTotalPrice(savedShowSeat));
 
-        return booking;
+        return bookingRepository.save(booking);
     }
 }
